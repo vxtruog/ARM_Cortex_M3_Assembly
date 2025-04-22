@@ -31,6 +31,7 @@ Copyright © 2025 pyjamabrah.com. All Rights Reserved.
 
 # GDB
 - ni : bước từng lệnh máy, không bước vào hàm.
+- x <address> : in ra giá trị tại một địa chỉ.
 - q -> y : để thoát GDB.
 
 # QEMU
@@ -42,5 +43,7 @@ Copyright © 2025 pyjamabrah.com. All Rights Reserved.
   nên khi lưu trữ địa chỉ của hàm reset_handler thì địa chỉ sẽ được tăng lên 1 ở bit 0,
   vì vậy khi debug giá trị trỏ đến hàm reset_handler là một số lẻ, nhưng giá trị địa chỉ thực là số lẻ đó trừ 1,
   nếu giá trị trỏ đến hàm reset_handler là một số chẵn, khi đó bit 0 là 0, thì sẽ bị lỗi.
+
+# Stack manipulation
 
 
