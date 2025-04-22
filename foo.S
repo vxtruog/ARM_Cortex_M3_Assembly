@@ -2,7 +2,7 @@
 vector_table:
     .word 0xABC0
     .word reset_handler
-    .zero 400
+    .zero 4
 
     .section .text
     .align 1

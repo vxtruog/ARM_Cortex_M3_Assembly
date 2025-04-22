@@ -29,4 +29,12 @@ Copyright © 2025 pyjamabrah.com. All Rights Reserved.
 # Docker
 - Ctrl + Shift + P  => Rebuild Container
 
+# GDB
+- ni : bước từng lệnh máy, không bước vào hàm.
+- q -> y : để thoát GDB.
+
+# QEMU
+- Giữ Ctrl + A -> thả hai nút -> nhấn x : thoát qemu
+- Đọc tệp nhị phân: xxd -e -c 4 -g 4 <namefile>.bin
+
 
