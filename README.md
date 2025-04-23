@@ -32,6 +32,9 @@ Copyright © 2025 pyjamabrah.com. All Rights Reserved.
 # GDB
 - ni : bước từng lệnh máy, không bước vào hàm.
 - x <address> : in ra giá trị tại một địa chỉ.
+- break <address> : đặt break point để nếu debug chạy đến đây sẽ dừng
+- c : lệnh chạy debug liên tục đến điểm break point gần nhất (nên có break point trước nếu không khi vào lệnh rẽ nhánh . sẽ bị treo)
+- Ctrl + C : để thoát debug trong trường hợp debug bị treo ở lệnh rẽ nhánh .
 - q -> y : để thoát GDB.
 
 # QEMU

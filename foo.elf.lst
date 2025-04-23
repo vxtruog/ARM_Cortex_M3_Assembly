@@ -6,31 +6,63 @@ Disassembly of section .text:
 
 00000000 <vector_table>:
    0:	20001000 	andcs	r1, r0, r0
-   4:	00000011 	andeq	r0, r0, r1, lsl r0
+   4:	000001d1 	ldrdeq	r0, [r0], -r1
+	...
+  3c:	000001e9 	andeq	r0, r0, r9, ror #3
 	...
 
-00000010 <reset_handler>:
+000001d0 <reset_handler>:
 
     .section .text
     .align 1
     .type reset_handler, %function
 reset_handler:
-    mov r1, #7
-  10:	2107      	movs	r1, #7
-    mov r2, #3
-  12:	2203      	movs	r2, #3
+    ldr r0, =systick_csr
+ 1d0:	4806      	ldr	r0, [pc, #24]	; (1ec <break_here+0x2>)
+    ldr r1, =systick_rvr
+ 1d2:	4907      	ldr	r1, [pc, #28]	; (1f0 <break_here+0x6>)
+    ldr r2, =systick_cvr
+ 1d4:	4a07      	ldr	r2, [pc, #28]	; (1f4 <break_here+0xa>)
+    ldr r3, =timout
+ 1d6:	f06f 437f 	mvn.w	r3, #4278190080	; 0xff000000
 
-    push {r1, r2}
-  14:	b406      	push	{r1, r2}
+    str r3, [r1]        // giá trị đỉnh đếm ngược
+ 1da:	600b      	str	r3, [r1, #0]
 
-    mov r1, #5
-  16:	2105      	movs	r1, #5
-    mov r2, #5
-  18:	2205      	movs	r2, #5
+    mov r3, #0x0
+ 1dc:	2300      	movs	r3, #0
+    str r3, [r2]        // ghi bất kỳ giá trị nào sẽ reset giá trị đang đếm ngược về 0
+ 1de:	6013      	str	r3, [r2, #0]
 
-    pop {r2, r1}
-  1a:	bc06      	pop	{r1, r2}
-  1c:	f7ff fffe 	bl	1c <reset_handler+0xc>
+    mov r3, #0x7
+ 1e0:	2307      	movs	r3, #7
+    str r3, [r0]        // dùng processor clock, cho phép ngắt khi đếm đến 0, cho phép counter
+ 1e2:	6003      	str	r3, [r0, #0]
+
+    mov r5, #0
+ 1e4:	2500      	movs	r5, #0
+
+    b .
+ 1e6:	e7fe      	b.n	1e6 <reset_handler+0x16>
+
+000001e8 <systick_handler>:
+
+    .section .text
+    .align 1
+    .type systick_handler, %function
+systick_handler:
+    add r5, r5, #1
+ 1e8:	3501      	adds	r5, #1
+
+000001ea <break_here>:
+break_here:
+ 1ea:	4770      	bx	lr
+    ldr r0, =systick_csr
+ 1ec:	e000e010 	and	lr, r0, r0, lsl r0
+    ldr r1, =systick_rvr
+ 1f0:	e000e014 	and	lr, r0, r4, lsl r0
+    ldr r2, =systick_cvr
+ 1f4:	e000e018 	and	lr, r0, r8, lsl r0
 
 Disassembly of section .ARM.attributes:
 
@@ -39,11 +71,8 @@ Disassembly of section .ARM.attributes:
    4:	61656100 	cmnvs	r5, r0, lsl #2
    8:	01006962 	tsteq	r0, r2, ror #18
    c:	00000016 	andeq	r0, r0, r6, lsl r0
-    mov r1, #7
   10:	726f4305 	rsbvc	r4, pc, #335544320	; 0x14000000
-    push {r1, r2}
   14:	2d786574 	cfldr64cs	mvdx6, [r8, #-464]!	; 0xfffffe30
-    mov r2, #5
   18:	0600334d 	streq	r3, [r0], -sp, asr #6
   1c:	094d070a 	stmdbeq	sp, {r1, r3, r8, r9, sl}^
   20:	Address 0x0000000000000020 is out of bounds.
@@ -52,24 +81,24 @@ Disassembly of section .ARM.attributes:
 Disassembly of section .debug_line:
 
 00000000 <.debug_line>:
-   0:	00000037 	andeq	r0, r0, r7, lsr r0
+   0:	00000042 	andeq	r0, r0, r2, asr #32
    4:	001c0003 	andseq	r0, ip, r3
    8:	01020000 	mrseq	r0, (UNDEF: 2)
    c:	000d0efb 	strdeq	r0, [sp], -fp
-    mov r1, #7
   10:	01010101 	tsteq	r1, r1, lsl #2
-    push {r1, r2}
   14:	01000000 	mrseq	r0, (UNDEF: 0)
-    mov r2, #5
   18:	00010000 	andeq	r0, r1, r0
   1c:	2e6f6f66 	cdpcs	15, 6, cr6, cr15, cr6, {3}
   20:	00000053 	andeq	r0, r0, r3, asr r0
   24:	05000000 	streq	r0, [r0, #-0]
-  28:	00001002 	andeq	r1, r0, r2
-  2c:	010a0300 	mrseq	r0, (UNDEF: 58)
-  30:	21222221 			; <UNDEFINED> instruction: 0x21222221
-  34:	02022122 	andeq	r2, r2, #-2147483640	; 0x80000008
-  38:	Address 0x0000000000000038 is out of bounds.
+  28:	0001d002 	andeq	sp, r1, r2
+  2c:	01150300 	tsteq	r5, r0, lsl #6
+  30:	30212121 	eorcc	r2, r1, r1, lsr #2
+  34:	21222122 			; <UNDEFINED> instruction: 0x21222122
+  38:	22262222 	eorcs	r2, r6, #536870914	; 0x20000002
+  3c:	2f206903 	svccs	0x00206903
+  40:	0002022f 	andeq	r0, r2, pc, lsr #4
+  44:	Address 0x0000000000000044 is out of bounds.
 
 
 Disassembly of section .debug_info:
@@ -79,11 +108,8 @@ Disassembly of section .debug_info:
    4:	00000002 	andeq	r0, r0, r2
    8:	01040000 	mrseq	r0, (UNDEF: 4)
    c:	00000000 	andeq	r0, r0, r0
-    mov r1, #7
-  10:	00000010 	andeq	r0, r0, r0, lsl r0
-    push {r1, r2}
-  14:	00000020 	andeq	r0, r0, r0, lsr #32
-    mov r2, #5
+  10:	000001d0 	ldrdeq	r0, [r0], -r0	; <UNPREDICTABLE>
+  14:	000001f8 	strdeq	r0, [r0], -r8
   18:	00000000 	andeq	r0, r0, r0
   1c:	00000006 	andeq	r0, r0, r6
   20:	00000029 	andeq	r0, r0, r9, lsr #32
@@ -95,9 +121,8 @@ Disassembly of section .debug_abbrev:
 00000000 <.debug_abbrev>:
    0:	10001101 	andne	r1, r0, r1, lsl #2
    4:	12011106 	andne	r1, r1, #-2147483647	; 0x80000001
-   8:	1b0e0301 	blne	380c14 <reset_handler+0x380c04>
+   8:	1b0e0301 	blne	380c14 <break_here+0x380a2a>
    c:	130e250e 	movwne	r2, #58638	; 0xe50e
-    mov r1, #7
   10:	00000005 	andeq	r0, r0, r5
 
 Disassembly of section .debug_aranges:
@@ -107,9 +132,8 @@ Disassembly of section .debug_aranges:
    4:	00000002 	andeq	r0, r0, r2
    8:	00040000 	andeq	r0, r4, r0
    c:	00000000 	andeq	r0, r0, r0
-  10:	00000010 	andeq	r0, r0, r0, lsl r0
-    push {r1, r2}
-  14:	00000010 	andeq	r0, r0, r0, lsl r0
+  10:	000001d0 	ldrdeq	r0, [r0], -r0	; <UNPREDICTABLE>
+  14:	00000028 	andeq	r0, r0, r8, lsr #32
 	...
 
 Disassembly of section .debug_str:
@@ -119,11 +143,8 @@ Disassembly of section .debug_str:
    4:	772f0053 			; <UNDEFINED> instruction: 0x772f0053
    8:	736b726f 	cmnvc	fp, #-268435450	; 0xf0000006
    c:	65636170 	strbvs	r6, [r3, #-368]!	; 0xfffffe90
-    mov r1, #7
   10:	52412f73 	subpl	r2, r1, #460	; 0x1cc
-    push {r1, r2}
   14:	6f435f4d 	svcvs	0x00435f4d
-    mov r2, #5
   18:	78657472 	stmdavc	r5!, {r1, r4, r5, r6, sl, ip, sp, lr}^
   1c:	5f334d5f 	svcpl	0x00334d5f
   20:	65737341 	ldrbvs	r7, [r3, #-833]!	; 0xfffffcbf
