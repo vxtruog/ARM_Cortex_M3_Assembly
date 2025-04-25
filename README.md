@@ -24,7 +24,14 @@ Refer to the following resource when progressing through the course:
 Copyright © 2025 pyjamabrah.com. All Rights Reserved.
 
 
-
+# Một số vấn đề liên quan đến git
+- git add .: thêm toàn bộ các file vào git
+- git commit -m "hi": commit các file để có thể push
+- git push origin main: push các file
+- git reset --hard origin main: để trở lại phiên bản trước đó khi chưa bị lỗi
+- Khi làm việc với những file được tạo ra có kích cỡ nặng -> sẽ không push được
+  + khi đó tải thêm lfs: sudo apt-get install git-lfs
+  + thêm lệnh để theo dõi những loại file lớn đó: git lfs track "*.<typefile>"
 
 # Docker
 - Ctrl + Shift + P  => Rebuild Container
