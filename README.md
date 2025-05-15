@@ -20,8 +20,6 @@ Refer to the following resource when progressing through the course:
 ### Cortex-M3 Documentation
 1. [Cortex-M3 Devices Generic User Guide](https://developer.arm.com/documentation/dui0552/latest/)
 
-# Copyright
-Copyright © 2025 pyjamabrah.com. All Rights Reserved.
 
 
 # Một số vấn đề liên quan đến git
